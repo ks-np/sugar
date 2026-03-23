@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>บันทึกค่าน้ำตาล</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #00c300;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    button:active {
+      background: #009900;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>🩸 บันทึกค่าน้ำตาล</h2>
+
+  <label>ค่าน้ำตาล (mg/dL)</label>
+  <input type="number" id="value">
+
+  <label>วันที่</label>
+  <input type="date" id="date">
+
+  <label>เวลา</label>
+  <input type="time" id="time">
+
+  <label>หมายเหตุ</label>
+  <textarea id="note"></textarea>
+
+  <button onclick="saveData()">บันทึก</button>
+</div>
+
+<script>
+  let userId = "";
+
+  async function initLIFF() {
+    await liff.init({ liffId: "YOUR_LIFF_ID" });
+
+    if (!liff.isLoggedIn()) {
+      liff.login();
+    } else {
+      const profile = await liff.getProfile();
+      userId = profile.userId;
+    }
+  }
+
+  async function saveData() {
+    const value = document.getElementById("value").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+    const note = document.getElementById("note").value;
+
+    if (!value || !date || !time) {
+      alert("กรอกข้อมูลให้ครบครับ");
+      return;
+    }
+
+    await fetch("https://script.google.com/macros/s/AKfycbxtMBEhQg4VvqCVJJOLQuZlgxBVLRtDS_wSnQjK_78bw2lmOiavpT5-VqiP7XBscec_/exec", {
+      method: "POST",
+      body: JSON.stringify({
+        action: "sugar",
+        userId: userId,
+        value: value,
+        date: date,
+        time: time,
+        note: note
+      })
+    });
+
+    alert("บันทึกเรียบร้อย 🎉");
+
+    // reset form
+    document.getElementById("value").value = "";
+    document.getElementById("note").value = "";
+  }
+
+  initLIFF();
+</script>
+
+</body>
+</html>
